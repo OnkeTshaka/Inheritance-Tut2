@@ -1,127 +1,130 @@
 print("*****************************Question 1************************************************")
+
+
 class Flower:
-    def __init__(self,name,num_petals,price):
-        #Initialize
-        self.name = name
-        self.num_petals = num_petals
-        self.price = price
+    def __init__(self, name, num_petals, price):
+        # Initialize
+        self.name = str(name)
+        self.num_petals = int(num_petals)
+        self.price = float(price)
 
-    # Setters
-    def get_name(self, name):
-        return self.name == name
+     # Setters
+    def setName(self, name):
+     self.name = name
 
-    def get_num_petals(self, num_petals):
-        return self.num_petals == num_petals
+    def setPetals(self, num_petals):
+     self.num_petals = num_petals
 
-    def get_price(self, price):
-        return self.price == price
-        #Getters
-    def get_name(self):
-        return self.name
-    def get_num_petals(self):
-        return  self.num_petals
-    def get_price(self):
-        return self.price
 
-    def hello(self):
-       print("Hello " + self.name + "\nThe price is: R"+str(self.price) + "\nPetals "+str(self.num_petals))
-flower1 = Flower("Onke",2,20.7)
-flower1.hello()
+    def setPrice(self, price):
+     self.price = price
 
+    # Getters
+
+
+    def get_Name(self):
+     return self.name
+
+
+    def getPetals(self):
+     return self.num_petals
+
+
+    def getPrice(self):
+     return self.price
+
+
+flower1 = Flower("One", 2, 200)
+print("Flower")
+print("Name: " + flower1.get_Name())
+print("Number of petals: " + str(flower1.getPetals()))
+print("Price: " + str(flower1.getPrice()))
+print("\n")
 
 print("*****************************Question 2************************************************")
-class Goat(object):
-    def __init__(self, variable_tail):
-        self.variable_tail = variable_tail
-
-    def milk(self):
-        print("Milk")
-
-    def jump(self):
-        print("Jump")
-
-goat = Goat("tail")
-print(goat.milk())
-print(goat.jump())
-
-
-
-print("*****************************Question 3************************************************")
 class CreditCard:
-    def __init__(self, customer, bank, acnt, limit):
+    def __init__(self, customer, bank, acnt,limit):
         self.customer = customer
         self.bank = bank
         self.acnt = acnt
         self.limit = limit
+        self.balance = 0
+
+    def get_customer(self):
+        return self.customer
+
+    def get_bank(self):
+        return self.bank
+
+    def get_account(self):
+        return self.acnt
+
+    def get_limit(self):
+        return self.limit
+
+    def get_balance(self):
+        return self.balance
+
+    def charge(self, price):
+        if price + self.balance > self.limit:
+            return False
+        else:
+            self.balance += price
+            return True
+
+    def make_payment(self, amount):
+        self.balance -= amount
 
 class PredatoryCreditCard(CreditCard):
+    def __init__(self, customer, bank, acnt, limit, apr):
+        super().__init__(customer, bank, acnt, limit)
+        self.apr = apr
 
-     #”””An extension to CreditCard that compounds interest and fees.”””
-      def init (self, customer, bank, acnt, limit, apr):
-          # ”””Create a new predatory credit card instance.
+    def charge(self, price):
+        success = super().charge(price)
+        if not success:
+            self.balance += 10
+        return success
 
-          # The initial balance is zero.
-
-          # customer the name of the customer (e.g., John Bowman )
-
-          # bank the name of the bank (e.g., California Savings )
-
-          # acnt the acount identifier (e.g., 5391 0375 9387 5309 )
-
-          # limit credit limit (measured in dollars)
-
-          # apr annual percentage rate (e.g., 0.0825 for 8.25% APR)
-          super().init(customer, bank, acnt, limit)  # call super constructor
-          self.apr = apr
-      def charge(self, price):
-# ”””Charge given price to the card, assuming sufficient credit limit.
-# Return True if charge was processed.
-# Return False and assess 5 fee if charge is denied.”””
-         success = super( ).charge(price) # call inherited method
-# if not success:
-         self. balance += 5 # assess penalty
-         return success # caller expects return value
-      def process_month(self):
-# ”””Assess monthly interest on outstanding balance.”””
-          if self. balance > 0:
-             monthly_factor = pow(1 + self. apr, 1/12)
-             self. balance = monthly_factor
-
+    def process_month(self):
+        """Assess monthly interest on outstanding balance."""
+        if self.balance > 0:
+            # if positive balance, convert APR to monthly multiplicative factor
+            monthly_factor = pow(1 + self.apr, 1 / 12)
+            self.balance *= monthly_factor
 print("*****************************Question 4************************************************")
 
 
 class Progression:
+    def __init__(self, start=0):
+        self._current = start
 
-# 2 ”””Iterator producing a generic progression.
+    def _advance(self):
+        self._current += 1
+
+    def __next__(self):
+        if self._current is None:
+            raise StopIteration()
+        else:
+            answer = self._current
+            self._advance()
+            return answer
+
+    def __iter__(self):
+        return self
+
+    def print_progression(self, n):
+        print(' '.join(str(next(self)) for j in range(n)))
+
+class FibonacciProgression(Progression):
+    def __init__(self, first=2, second=200):
+        super().__init__(first)  # start progression at first
+        self._prev = second - first  # fictitious value preceding the first
+
+    def _advance(self):
+        self._prev, self._current = self._current, self._prev + self._current
+
+print('Fibonacci progression with default start values:')
+FibonacciProgression().print_progression(10)
 
 
-# 4 Default iterator produces the whole numbers 0, 1, 2, ... 5 ”””
-      def init (self, start=0):
-
-# 8 ”””Initialize current to the first value of the progression.”””
-        self. current = start
-      def advance(self):
-
-# 12 ”””Update self. current to a new value.
-
-# This should be overridden by a subclass to customize progression.
-# By convention, if current is set to None, this designates the
-# end of a finite progression.
-       self. current += 1
-      def next (self):
-
-# 22 ”””Return the next element, or else raise StopIteration error.”””
-       if self. current is None: # our convention to end a progression
-        raise StopIteration( )
-       else:
-        answer = self. current # record current value to return
-        self. advance( ) # advance to prepare for next time
-       return answer # return the answer
-      def iter (self):
-
-# ”””By convention, an iterator must return itself as an iterator.”””
-       return self
-      def progression(self, n):
-
-# ”””Print next n values of the progression.”””
-         print(n.join(str(next(self)) for j in range(n)))
